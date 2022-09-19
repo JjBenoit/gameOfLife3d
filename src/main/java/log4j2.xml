@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration xmlns="http://logging.apache.org/log4j/2.0/config" status="WARN" debug="false">
+
+
+  <Appenders>
+
+    <Console name="console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
+    </Console>
+
+  </Appenders>
+
+  <Loggers>
+
+    <Logger name="game.GameOflife" level="INFO" />
+    <Logger name="printGrid" level="INFO" />
+    <Logger name="graphixx.GridFramePaint" level="INFO" />
+    <Logger name="game.rules.StandardRulesEvolutionCell" level="INFO" />
+    <Logger name="game.object.Cell" level="INFO" />
+    <Logger name="util.GridUtil" level="INFO" />
+    <Logger name="game.visitor.AbstractVisitThreeDimensionalArray" level="INFO" />
+    
+    
+    
+    
+
+    <Root level="INFO">
+      <AppenderRef ref="console" />
+    </Root>
+
+  </Loggers>
+
+</Configuration>
