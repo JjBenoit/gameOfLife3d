@@ -4,35 +4,32 @@ import game.GameOflife;
 import game.StateLife;
 import game.object.Grid;
 import game.visitor.VisitThreeDimensionalArrayInitCellTor;
+import graphixx.GameInfos;
 import graphixx.GridFramePaint;
 import util.GridUtil;
 
-public class RunGameRandomGrid
-{
+public class RunGameRandomGrid {
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
 
-        Grid grid = null;
+	GameInfos gameInfos = new GameInfos();
+	gameInfos.setPaused(false);
 
-        // Taille de la grille
-        int sizeX = 100;
-        int sizeY = 100;
-        int sizeZ = 1;
+	gameInfos.setGrid(new Grid(1, 1000, 1000));
 
-        GameOflife jeuVie = new GameOflife(sizeY, sizeX, sizeZ);
+	// option pré remplir la gille avec des cellules vivantes
+	GridUtil.initGrid(gameInfos.getGrid(), StateLife.DEATH_VALUE,
+		new VisitThreeDimensionalArrayInitCellTor(gameInfos.getGrid().getGrid()));
 
-        // option pré remplir la gille avec des cellules vivantes
-        grid = jeuVie.getGrid();
-        GridUtil.initGrid(grid, StateLife.DEATH_VALUE, new VisitThreeDimensionalArrayInitCellTor(grid.getGrid()));
+	// option pré remplir la gille avec des cellules mortes random
+	GridUtil.addRandomDeathCell((int) ((gameInfos.getGrid().getSizeY() * gameInfos.getGrid().getSizeX()) * 0.5),
+		StateLife.LIFE_VALUE, gameInfos.getGrid());
 
-        // option pré remplir la gille avec des cellules mortes random
-        GridUtil.addRandomDeathCell((int) ((sizeY * sizeX) * 0.5), StateLife.LIFE_VALUE, grid);
+	GridFramePaint frame = new GridFramePaint(gameInfos);
+	frame.startRender();
 
-        GridFramePaint frame = new GridFramePaint(jeuVie);
-        // option activer les logs
-
-        frame.go();
+	GameOflife jeuVie = new GameOflife(gameInfos);
+	jeuVie.play();
 
     }
 

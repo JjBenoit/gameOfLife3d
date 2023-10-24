@@ -46,14 +46,14 @@ public class Cell
     // Recoit d'une cellule voisine ( connectée) appelante un changement d'état. Met a jour le context de la celulle appelée
     private synchronized void contextChanged(int delta)
     {
-        int oldContext = getWritingContext();
+        int oldContext = getSecondContextSum();
 
-        setWritingContext(delta);
+        setSecondContextSum(delta);
 
         if (LOGGER.isDebugEnabled())
         {
             LOGGER.debug(
-                "Cell: " + this.getPosition() + " Context  modified (" + oldContext + " + " + delta + ") = " + this.getWritingContext());
+                "Cell: " + this.getPosition() + " Context  modified (" + oldContext + " + " + delta + ") = " + this.getSecondContextSum());
         }
     }
 
@@ -91,12 +91,12 @@ public class Cell
 
     }
 
-    public void setWritingContext(int delta)
+    public void setSecondContextSum(int delta)
     {
         context[1] = (delta + context[1] < 0) ? 0 : (delta + context[1]);
     }
 
-    public int getWritingContext()
+    public int getSecondContextSum()
     {
         return context[1];
     }

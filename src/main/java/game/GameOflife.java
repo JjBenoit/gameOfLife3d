@@ -7,17 +7,14 @@ import game.executor.gridcontext.GridContextUpdateExecutor;
 import game.executor.gridcontext.MultiThreadGridContextUpdateExecutor;
 import game.executor.turn.MultiThreadTurnExecutor;
 import game.executor.turn.TurnExecutor;
-import game.object.Grid;
 import game.rules.EvolutionCellRule;
 import game.rules.StandardRulesEvolutionCell;
+import graphixx.GameInfos;
 import util.GridUtil;
 
-public class GameOflife
-{
+public class GameOflife {
 
-    private Grid grid;
-
-    private int turn;
+    private GameInfos gameInfos;
 
     private EvolutionCellRule evolutionRule;
 
@@ -29,68 +26,58 @@ public class GameOflife
 
     private static final Logger LOGGER_PRINTGRID = LogManager.getLogger("printGrid");
 
-    public GameOflife(int sizeX, int sizeY, int sizeZ)
-    {
-        this(new Grid(sizeZ, sizeY, sizeX));
-    }
+    public GameOflife(GameInfos gameInfos) {
 
-    public GameOflife(Grid grid)
-    {
-        this.grid = grid;
-        // customisable : les regles d'evolution des cellules
-        evolutionRule = new StandardRulesEvolutionCell();
+	this.gameInfos = gameInfos;
+	// customisable : les regles d'evolution des cellules
+	evolutionRule = new StandardRulesEvolutionCell();
 
-        // customisable : la moteur d'enchainement des tours calculant l'état des celulles
-        turnExecutor = new MultiThreadTurnExecutor(50, evolutionRule);
+	// customisable : la moteur d'enchainement des tours calculant l'état des
+	// celulles
+	turnExecutor = new MultiThreadTurnExecutor(20, evolutionRule);
 
-        // customisable : la moteur de mise a jour du context ( environnment des cellule )
-        gridContextUpdateExecutor = new MultiThreadGridContextUpdateExecutor(10, grid);
+	// customisable : la moteur de mise a jour du context ( environnment des cellule
+	// )
+	gridContextUpdateExecutor = new MultiThreadGridContextUpdateExecutor(10, gameInfos.getGrid());
 
-        // turnExecutor = new SimpleTurnExecutor(evolutionRule);
-        // gridContextUpdateExecutor = new SimpleGridContextUpdateExecutor(grid);
+	// turnExecutor = new SimpleTurnExecutor(evolutionRule);
+	// gridContextUpdateExecutor = new SimpleGridContextUpdateExecutor(grid);
 
     }
 
-    public void playNumberTurns(int nbTurn)
-    {
-        int i = 0;
-        while (i < nbTurn)
-        {
-            playOneTurn();
-            i++;
-        }
+    public void play() {
+	while (true) {
+	    playOneTurn();
+	}
     }
 
-    public void playOneTurn()
-    {
-
-        gridContextUpdateExecutor.updateContextFromWrtingContext();
-
-        if (LOGGER_PRINTGRID.isDebugEnabled())
-        {
-            LOGGER_PRINTGRID.debug("Turn:" + turn + "\n" + GridUtil.printGrid(grid));
-        }
-
-        long time = System.currentTimeMillis();
-
-        turnExecutor.playOneTurn(grid);
-
-        if (LOGGER.isDebugEnabled())
-        {
-            LOGGER.debug("Grid traité en : " + (System.currentTimeMillis() - time) + " ms");
-        }
-
-        turn++;
+    public void playNumberTurns(int nbTurn) {
+	int i = 0;
+	while (i < nbTurn) {
+	    playOneTurn();
+	    i++;
+	}
     }
 
-    public Grid getGrid()
-    {
-        return grid;
-    }
+    public void playOneTurn() {
 
-    public int getTurn()
-    {
-        return turn;
+	if (!gameInfos.isPaused()) {
+	    gridContextUpdateExecutor.updateContextFromWrtingContext();
+
+	    if (LOGGER_PRINTGRID.isDebugEnabled()) {
+		LOGGER_PRINTGRID.debug("Turn:" + gameInfos.getGameNbturn() + "\n" + GridUtil.printGrid(gameInfos.getGrid()));
+	    }
+
+	    long time = System.currentTimeMillis();
+
+	    turnExecutor.playOneTurn(gameInfos.getGrid());
+
+	    if (LOGGER.isDebugEnabled()) {
+		LOGGER.debug("Grid traité en : " + (System.currentTimeMillis() - time) + " ms");
+	    }
+
+	    gameInfos.setGameNbturn(gameInfos.getGameNbturn() + 1);
+	}
     }
 
 }
