@@ -52,13 +52,13 @@ public class Grid {
 
     public List<Cell> getConnectedCells(Cell cell) {
 
-	return abstractVisitThreeDimensionalArray.getConnectedCellsFromPosition(cell.getPosition(), grid);
+	return abstractVisitThreeDimensionalArray.getConnectedCellsFromPosition(cell.getPositionInGrid(), grid);
 
     }
 
     public void addCell(Cell cell) {
 	bagOfCells.add(cell);
-	grid[cell.getPosition().z][cell.getPosition().y][cell.getPosition().x] = cell;
+	grid[cell.getPositionInGrid().z][cell.getPositionInGrid().y][cell.getPositionInGrid().x] = cell;
     }
 
     public List<Cell> getBagOfCells() {

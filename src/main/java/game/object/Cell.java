@@ -52,7 +52,7 @@ public class Cell {
 
     }
 
-    public Position3d getPosition() {
+    public Position3d getPositionInGrid() {
 	return position;
     }
 

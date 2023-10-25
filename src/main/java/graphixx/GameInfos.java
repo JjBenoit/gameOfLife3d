@@ -1,15 +1,12 @@
 package graphixx;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
 
 import game.object.Grid;
 
 public class GameInfos {
 
     private Grid grid;
-
-    private Rectangle sizeScreen;
 
     private Dimension dimCellule;
 
@@ -55,14 +52,6 @@ public class GameInfos {
 
     public void setDimCellule(Dimension dimCellule) {
 	this.dimCellule = dimCellule;
-    }
-
-    public Rectangle getSizeScreen() {
-	return sizeScreen;
-    }
-
-    public void setSizeScreen(Rectangle sizeScreen) {
-	this.sizeScreen = sizeScreen;
     }
 
     public void setGrid(Grid grid) {

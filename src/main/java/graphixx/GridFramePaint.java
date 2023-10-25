@@ -2,7 +2,6 @@ package graphixx;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 
 import javax.swing.JFrame;
 
@@ -12,10 +11,6 @@ import org.apache.logging.log4j.Logger;
 import game.GameOflife;
 
 public class GridFramePaint extends JFrame {
-
-    public int tailleEcranX = 1024;
-
-    public int tailleEcranY = 768;
 
     private MoteurGraphique2D moteurGraphique2D;
 
@@ -29,16 +24,15 @@ public class GridFramePaint extends JFrame {
 
     public GridFramePaint(GameInfos gameInfos, GameOflife jeuVie) {
 
-	setSize(tailleEcranX, tailleEcranY);
+	this.gameInfos = gameInfos;
+	this.gameInfos.setDimCellule(new Dimension(5, 5));
+
+	// ((Graphics2D) getGraphics()).getDeviceConfiguration().getBounds()
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	setIgnoreRepaint(true);
 	setVisible(true);
 
 	addKeyListener(new KeyBordListener(gameInfos));
-
-	this.gameInfos = gameInfos;
-	this.gameInfos.setSizeScreen(((Graphics2D) getGraphics()).getDeviceConfiguration().getBounds());
-	this.gameInfos.setDimCellule(new Dimension(5, 5));
 
 	moteurGraphique2D = new MoteurGraphique2D();
 
@@ -49,6 +43,8 @@ public class GridFramePaint extends JFrame {
 	panelInfos = new PanelInfos(gameInfos);
 	add(panelInfos, BorderLayout.SOUTH);
 	moteurGraphique2D.addRender(panelInfos);
+
+	pack();
 
     }
 

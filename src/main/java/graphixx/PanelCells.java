@@ -6,7 +6,6 @@ import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinTask;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,11 +37,14 @@ public class PanelCells extends Canvas implements GraphicalRender {
     public PanelCells(GameInfos gameInfos, GameOflife jeuVie) {
 	this.gameInfos = gameInfos;
 	this.jeuVie = jeuVie;
-	setSize(gameInfos.getSizeScreen().width, (gameInfos.getSizeScreen().height - 100));
+
+	setSize(gameInfos.getGrid().getSizeX() * gameInfos.getDimCellule().width,
+		gameInfos.getGrid().getSizeY() * gameInfos.getDimCellule().height);
+
 	addMouseListener(new MouseListenerGrid(gameInfos));
 	// inhibe la méthode courante d'affichage du composant
 	setIgnoreRepaint(true);
-	executor = new ForkJoinPool(10);
+	executor = new ForkJoinPool(2);
 
     }
 
@@ -70,17 +72,15 @@ public class PanelCells extends Canvas implements GraphicalRender {
 
 	    long time = System.currentTimeMillis();
 
-	    ForkJoinTask task = executor.submit(() -> listCellsofZ.parallelStream().forEach((cell) -> update(cell)));
+	    // BufferedImage img = new BufferedImage(selectedZ, selectedZ,
+	    // BufferedImage.TYPE_INT_RGB);
+	    // Pour multiThread : executor.submit(() ->
+	    // listCellsofZ.parallstream().forEach((cell) -> update(cell))).join(); mais le
+	    // muti thread pose probleme grphic est il tread safe ?
+
+	    executor.submit(() -> listCellsofZ.stream().forEach((cell) -> update(cell))).join();
 
 	    jeuVie.playOneTurn();
-
-	    while (!task.isDone())
-		try {
-		    Thread.sleep(10);
-		} catch (InterruptedException e) {
-		    // TODO Auto-generated catch block
-		    e.printStackTrace();
-		}
 
 	    buffer.dispose();
 	    strategy.show();
@@ -94,18 +94,18 @@ public class PanelCells extends Canvas implements GraphicalRender {
     private void update(Cell cell) {
 
 	// on ne dessine pas ce qui ne se voit pas
-	if (!(cell.getPosition().x * gameInfos.getDimCellule().width > getWidth())
-		&& !(cell.getPosition().y * gameInfos.getDimCellule().height > getHeight())) {
+	if (!(cell.getPositionInGrid().x * gameInfos.getDimCellule().width > getWidth())
+		&& !(cell.getPositionInGrid().y * gameInfos.getDimCellule().height > getHeight())) {
 
 	    if (cell.getState() == StateLife.DEATH_VALUE) {
 		buffer.setColor(Color.BLACK);
-		buffer.fillRect(cell.getPosition().x * gameInfos.getDimCellule().width,
-			cell.getPosition().y * gameInfos.getDimCellule().height, gameInfos.getDimCellule().width,
+		buffer.fillRect(cell.getPositionInGrid().x * gameInfos.getDimCellule().width,
+			cell.getPositionInGrid().y * gameInfos.getDimCellule().height, gameInfos.getDimCellule().width,
 			gameInfos.getDimCellule().height);
 	    } else {
 		buffer.setColor(Color.WHITE);
-		buffer.fillRect(cell.getPosition().x * gameInfos.getDimCellule().width,
-			cell.getPosition().y * gameInfos.getDimCellule().height, gameInfos.getDimCellule().width,
+		buffer.fillRect(cell.getPositionInGrid().x * gameInfos.getDimCellule().width,
+			cell.getPositionInGrid().y * gameInfos.getDimCellule().height, gameInfos.getDimCellule().width,
 			gameInfos.getDimCellule().height);
 	    }
 	}
