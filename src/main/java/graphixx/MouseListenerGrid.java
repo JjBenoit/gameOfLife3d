@@ -34,10 +34,10 @@ public class MouseListenerGrid implements MouseListener {
 	Cell cell = gameInfos.getGrid().getGrid()[z][y][x];
 
 	if (e.getButton() == MouseEvent.BUTTON1)
-	    cell.changeState(StateLife.LIFE_VALUE);
+	    cell.setNextState(StateLife.LIFE_VALUE);
 
 	if (e.getButton() == MouseEvent.BUTTON2)
-	    cell.changeState(StateLife.DEATH_VALUE);
+	    cell.setNextState(StateLife.DEATH_VALUE);
 
     }
 

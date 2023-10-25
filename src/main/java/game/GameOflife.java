@@ -3,8 +3,6 @@ package game;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import game.executor.gridcontext.GridContextUpdateExecutor;
-import game.executor.gridcontext.MultiThreadGridContextUpdateExecutor;
 import game.executor.turn.MultiThreadTurnExecutor;
 import game.executor.turn.TurnExecutor;
 import game.rules.EvolutionCellRule;
@@ -20,8 +18,6 @@ public class GameOflife {
 
     private TurnExecutor turnExecutor;
 
-    private GridContextUpdateExecutor gridContextUpdateExecutor;
-
     private static final Logger LOGGER = LogManager.getLogger(GameOflife.class);
 
     private static final Logger LOGGER_PRINTGRID = LogManager.getLogger("printGrid");
@@ -35,13 +31,6 @@ public class GameOflife {
 	// customisable : la moteur d'enchainement des tours calculant l'état des
 	// celulles
 	turnExecutor = new MultiThreadTurnExecutor(20, evolutionRule);
-
-	// customisable : la moteur de mise a jour du context ( environnment des cellule
-	// )
-	gridContextUpdateExecutor = new MultiThreadGridContextUpdateExecutor(10, gameInfos.getGrid());
-
-	// turnExecutor = new SimpleTurnExecutor(evolutionRule);
-	// gridContextUpdateExecutor = new SimpleGridContextUpdateExecutor(grid);
 
     }
 
@@ -62,10 +51,10 @@ public class GameOflife {
     public void playOneTurn() {
 
 	if (!gameInfos.isPaused()) {
-	    gridContextUpdateExecutor.updateContextFromWrtingContext();
 
 	    if (LOGGER_PRINTGRID.isDebugEnabled()) {
-		LOGGER_PRINTGRID.debug("Turn:" + gameInfos.getGameNbturn() + "\n" + GridUtil.printGrid(gameInfos.getGrid()));
+		LOGGER_PRINTGRID.debug(
+			"Turn:" + gameInfos.getGameNbturn() + "\n" + GridUtil.printGrid(gameInfos.getGrid().getGrid()));
 	    }
 
 	    long time = System.currentTimeMillis();
