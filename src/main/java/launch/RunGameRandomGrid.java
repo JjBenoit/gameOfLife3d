@@ -14,17 +14,14 @@ public class RunGameRandomGrid {
 
 	GameInfos gameInfos = new GameInfos();
 
-	gameInfos.setGrid(new Grid(1, 1000, 1000, StateLife.DEATH_VALUE, new VisitThreeDimensionalArrayCellTor()));
+	gameInfos.setGrid(new Grid(1, 500, 500, StateLife.DEATH_VALUE, new VisitThreeDimensionalArrayCellTor()));
 
 	// option pré remplir la gille avec des cellules mortes random
 	GridUtil.addRandomDeathCell((int) ((gameInfos.getGrid().getSizeY() * gameInfos.getGrid().getSizeX()) * 0.5),
 		StateLife.LIFE_VALUE, gameInfos.getGrid());
 
-	GridFramePaint frame = new GridFramePaint(gameInfos);
+	GridFramePaint frame = new GridFramePaint(gameInfos, new GameOflife(gameInfos));
 	frame.startRender();
-
-	GameOflife jeuVie = new GameOflife(gameInfos);
-	jeuVie.play();
 
     }
 

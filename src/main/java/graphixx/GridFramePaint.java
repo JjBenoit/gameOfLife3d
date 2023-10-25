@@ -9,6 +9,8 @@ import javax.swing.JFrame;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import game.GameOflife;
+
 public class GridFramePaint extends JFrame {
 
     public int tailleEcranX = 1024;
@@ -25,7 +27,7 @@ public class GridFramePaint extends JFrame {
 
     private static final Logger LOGGER = LogManager.getLogger(GridFramePaint.class);
 
-    public GridFramePaint(GameInfos gameInfos) {
+    public GridFramePaint(GameInfos gameInfos, GameOflife jeuVie) {
 
 	setSize(tailleEcranX, tailleEcranY);
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -40,7 +42,7 @@ public class GridFramePaint extends JFrame {
 
 	moteurGraphique2D = new MoteurGraphique2D();
 
-	panelCells = new PanelCells(gameInfos);
+	panelCells = new PanelCells(gameInfos, jeuVie);
 	add(panelCells, BorderLayout.CENTER);
 	moteurGraphique2D.addRender(panelCells);
 

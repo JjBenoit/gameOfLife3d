@@ -44,7 +44,7 @@ public class KeyBordListener extends KeyAdapter {
 	    if ((gameInfos.getWaitInMS() - 5) >= 0)
 		gameInfos.setWaitInMS(gameInfos.getWaitInMS() - 5);
 	} else if (key == KeyEvent.VK_KP_RIGHT || key == KeyEvent.VK_RIGHT) {
-	    if (gameInfos.getSelectedZ() + 1 <= (gameInfos.getGrid().getGrid().length - 1))
+	    if (gameInfos.getSelectedZ() + 1 <= (gameInfos.getGrid().getSizeZ() - 1))
 		gameInfos.setSelectedZ(gameInfos.getSelectedZ() + 1);
 	} else if (key == KeyEvent.VK_KP_LEFT || key == KeyEvent.VK_LEFT) {
 	    if (gameInfos.getSelectedZ() - 1 >= 0)

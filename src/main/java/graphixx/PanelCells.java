@@ -2,19 +2,24 @@ package graphixx;
 
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
+import java.util.List;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import game.GameOflife;
 import game.StateLife;
-import game.object.Grid;
+import game.object.Cell;
 
 public class PanelCells extends Canvas implements GraphicalRender {
 
     private GameInfos gameInfos;
+
+    private GameOflife jeuVie;
 
     // variable permettant d'utiliser la mémoire VRAM
     private BufferStrategy strategy;
@@ -22,14 +27,23 @@ public class PanelCells extends Canvas implements GraphicalRender {
     // buffer mémoire ou les images et les textes sont appliqués
     private Graphics buffer;
 
+    private int selectedZ;
+
+    private List<Cell> listCellsofZ;
+
+    private ForkJoinPool executor;
+
     private static final Logger LOGGER = LogManager.getLogger(PanelCells.class);
 
-    public PanelCells(GameInfos gameInfos) {
+    public PanelCells(GameInfos gameInfos, GameOflife jeuVie) {
 	this.gameInfos = gameInfos;
+	this.jeuVie = jeuVie;
 	setSize(gameInfos.getSizeScreen().width, (gameInfos.getSizeScreen().height - 100));
 	addMouseListener(new MouseListenerGrid(gameInfos));
 	// inhibe la méthode courante d'affichage du composant
 	setIgnoreRepaint(true);
+	executor = new ForkJoinPool(10);
+
     }
 
     public void activeDBuffering() {
@@ -49,19 +63,24 @@ public class PanelCells extends Canvas implements GraphicalRender {
 
 	if (!gameInfos.isPaused() && isDisplayable()) {
 
+	    if (listCellsofZ == null || selectedZ != gameInfos.getSelectedZ()) {
+		listCellsofZ = gameInfos.getGrid().getBagOfCellsOfZ(selectedZ);
+		selectedZ = gameInfos.getSelectedZ();
+	    }
+
 	    long time = System.currentTimeMillis();
 
-	    for (int y = 0; y < gameInfos.getGrid().getGrid()[gameInfos.getSelectedZ()].length; y++) {
+	    ForkJoinTask task = executor.submit(() -> listCellsofZ.parallelStream().forEach((cell) -> update(cell)));
 
+	    jeuVie.playOneTurn();
+
+	    while (!task.isDone())
 		try {
-		    Thread.ofVirtual().start(new RunnableUpGraphixGrid(buffer, gameInfos.getGrid(),
-			    gameInfos.getSelectedZ(), y, gameInfos.getDimCellule(), this)).join();
+		    Thread.sleep(10);
 		} catch (InterruptedException e) {
 		    // TODO Auto-generated catch block
 		    e.printStackTrace();
 		}
-
-	    }
 
 	    buffer.dispose();
 	    strategy.show();
@@ -72,32 +91,23 @@ public class PanelCells extends Canvas implements GraphicalRender {
 
     }
 
-    record RunnableUpGraphixGrid(Graphics g, Grid grid, int selectedZ, int y, Dimension dimCellule, Canvas panelCells)
-	    implements Runnable {
+    private void update(Cell cell) {
 
-	@Override
-	public void run() {
+	// on ne dessine pas ce qui ne se voit pas
+	if (!(cell.getPosition().x * gameInfos.getDimCellule().width > getWidth())
+		&& !(cell.getPosition().y * gameInfos.getDimCellule().height > getHeight())) {
 
-	    for (int x = 0; x < grid.getGrid()[selectedZ][y].length; x++) {
-
-		// on ne dessine pas ce qui ne se voit pas
-		if (x * dimCellule.width > panelCells.getWidth())
-		    break;
-
-		// on ne dessine pas ce qui ne se voit pas
-		if (y * dimCellule.height > panelCells.getHeight())
-		    break;
-
-		if (grid.getGrid()[selectedZ][y][x].getState() == StateLife.DEATH_VALUE) {
-		    g.setColor(Color.BLACK);
-		    g.fillRect(x * dimCellule.width, y * dimCellule.height, dimCellule.width, dimCellule.height);
-		} else {
-		    g.setColor(Color.WHITE);
-		    g.fillRect(x * dimCellule.width, y * dimCellule.height, dimCellule.width, dimCellule.height);
-		}
-
+	    if (cell.getState() == StateLife.DEATH_VALUE) {
+		buffer.setColor(Color.BLACK);
+		buffer.fillRect(cell.getPosition().x * gameInfos.getDimCellule().width,
+			cell.getPosition().y * gameInfos.getDimCellule().height, gameInfos.getDimCellule().width,
+			gameInfos.getDimCellule().height);
+	    } else {
+		buffer.setColor(Color.WHITE);
+		buffer.fillRect(cell.getPosition().x * gameInfos.getDimCellule().width,
+			cell.getPosition().y * gameInfos.getDimCellule().height, gameInfos.getDimCellule().width,
+			gameInfos.getDimCellule().height);
 	    }
-
 	}
 
     }

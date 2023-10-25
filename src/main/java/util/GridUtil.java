@@ -40,15 +40,11 @@ public class GridUtil {
 	int i = 0;
 	while (i < nbCell) {
 
-	    int randomPosZ = grid.getGrid().length > 1 ? random.nextInt(grid.getGrid().length - 1) : 0;
-	    int randomPosY = grid.getGrid()[randomPosZ].length > 1
-		    ? random.nextInt(grid.getGrid()[randomPosZ].length - 1)
-		    : 0;
-	    int randomPosX = grid.getGrid()[randomPosZ][randomPosY].length > 1
-		    ? random.nextInt(grid.getGrid()[randomPosZ][randomPosY].length - 1)
-		    : 0;
+	    int randomPosZ = grid.getSizeZ() > 1 ? random.nextInt(grid.getSizeZ() - 1) : 0;
+	    int randomPosY = grid.getSizeY() > 1 ? random.nextInt(grid.getSizeY() - 1) : 0;
+	    int randomPosX = grid.getSizeX() > 1 ? random.nextInt(grid.getSizeX() - 1) : 0;
 
-	    grid.getGrid()[randomPosZ][randomPosY][randomPosX].setNextState(defaultValue);
+	    grid.addCell(new Cell(grid, defaultValue, new Position3d(randomPosX, randomPosY, randomPosZ)));
 	    i++;
 	}
     }
@@ -139,25 +135,25 @@ public class GridUtil {
 
     }
 
-    public static String printGrid(Cell[][][] grid) {
+    public static String printGrid(Grid grid) {
 	StringBuilder buffer = new StringBuilder();
 
-	for (int z = 0; z < grid.length; z++) {
+	for (int z = 0; z < grid.getSizeZ(); z++) {
 	    buffer.append("--Z" + z + "--\n");
 
-	    print2dDimendionGrid(grid[z]);
+	    print2dDimendionGrid(grid, z);
 	}
 
 	return buffer.toString();
 
     }
 
-    public static String print2dDimendionGrid(Cell[][] grid) {
+    public static String print2dDimendionGrid(Grid grid, int z) {
 	StringBuilder buffer = new StringBuilder();
 
-	for (int y = 0; y < grid.length; y++) {
-	    for (int x = 0; x < grid[y].length; x++) {
-		buffer.append(grid[y][x].getState());
+	for (int y = 0; y < grid.getSizeY(); y++) {
+	    for (int x = 0; x < grid.getSizeX(); x++) {
+		buffer.append(grid.getCell(z, y, x).getState());
 	    }
 	    buffer.append("\n");
 	}

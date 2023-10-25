@@ -15,7 +15,7 @@ public class GameInfos {
 
     private int selectedZ = 0;
 
-    private boolean paused = true;
+    private boolean paused = false;
 
     private int waitInMS;
 

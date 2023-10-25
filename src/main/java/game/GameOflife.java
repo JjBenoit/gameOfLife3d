@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import game.executor.turn.MultiThreadTurnExecutor;
 import game.executor.turn.TurnExecutor;
+import game.object.Cell;
 import game.rules.EvolutionCellRule;
 import game.rules.StandardRulesEvolutionCell;
 import graphixx.GameInfos;
@@ -30,7 +31,7 @@ public class GameOflife {
 
 	// customisable : la moteur d'enchainement des tours calculant l'état des
 	// celulles
-	turnExecutor = new MultiThreadTurnExecutor(20, evolutionRule);
+	turnExecutor = new MultiThreadTurnExecutor(10, evolutionRule);
 
     }
 
@@ -50,23 +51,24 @@ public class GameOflife {
 
     public void playOneTurn() {
 
-	if (!gameInfos.isPaused()) {
-
-	    if (LOGGER_PRINTGRID.isDebugEnabled()) {
-		LOGGER_PRINTGRID.debug(
-			"Turn:" + gameInfos.getGameNbturn() + "\n" + GridUtil.printGrid(gameInfos.getGrid().getGrid()));
-	    }
-
-	    long time = System.currentTimeMillis();
-
-	    turnExecutor.playOneTurn(gameInfos.getGrid());
-
-	    if (LOGGER.isDebugEnabled()) {
-		LOGGER.debug("Grid traité en : " + (System.currentTimeMillis() - time) + " ms");
-	    }
-
-	    gameInfos.setGameNbturn(gameInfos.getGameNbturn() + 1);
+	if (LOGGER_PRINTGRID.isDebugEnabled()) {
+	    LOGGER_PRINTGRID
+		    .debug("Turn:" + gameInfos.getGameNbturn() + "\n" + GridUtil.printGrid(gameInfos.getGrid()));
 	}
+
+	long time = System.currentTimeMillis();
+
+	turnExecutor.playOneTurn(gameInfos.getGrid());
+
+	// change de buffer pour le prochain tour
+	Cell.flipCurrentActiveStateBufferIndex();
+
+	if (LOGGER.isDebugEnabled()) {
+	    LOGGER.debug("Grid traité en : " + (System.currentTimeMillis() - time) + " ms");
+	}
+
+	gameInfos.setGameNbturn(gameInfos.getGameNbturn() + 1);
+
     }
 
 }

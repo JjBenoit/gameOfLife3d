@@ -1,5 +1,6 @@
 package game.object;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -21,11 +22,14 @@ public class Grid {
     // pour chaque niveau de Z , une grille Y,X
     private Cell[][][] grid;
 
+    private List<Cell> bagOfCells = new ArrayList<Cell>();
+
     public Grid(int sizeZ, int sizeY, int sizeX, int defaultCellValue,
 	    AbstractVisitThreeDimensionalArray abstractVisitThreeDimensionalArray) {
+
 	grid = (new Cell[sizeZ][sizeY][sizeX]);
 	this.abstractVisitThreeDimensionalArray = abstractVisitThreeDimensionalArray;
-
+	this.bagOfCells = new ArrayList<Cell>();
 	initGrid(defaultCellValue);
     }
 
@@ -34,12 +38,14 @@ public class Grid {
 	for (int z = 0; z < grid.length; z++) {
 	    for (int y = 0; y < grid[z].length; y++) {
 		for (int x = 0; x < grid[z][y].length; x++) {
-		    grid[z][y][x] = new Cell(this, defaultCellValue, new Position3d(x, y, z));
+		    Cell cell = new Cell(this, defaultCellValue, new Position3d(x, y, z));
+		    grid[z][y][x] = cell;
+		    bagOfCells.add(cell);
 		}
 	    }
 	}
 	if (LOGGER.isDebugEnabled()) {
-	    LOGGER.debug("Initialisation Grid\n" + GridUtil.printGrid(grid));
+	    LOGGER.debug("Initialisation Grid\n" + GridUtil.printGrid(this));
 	}
 
     }
@@ -48,6 +54,31 @@ public class Grid {
 
 	return abstractVisitThreeDimensionalArray.getConnectedCellsFromPosition(cell.getPosition(), grid);
 
+    }
+
+    public void addCell(Cell cell) {
+	bagOfCells.add(cell);
+	grid[cell.getPosition().z][cell.getPosition().y][cell.getPosition().x] = cell;
+    }
+
+    public List<Cell> getBagOfCells() {
+	return bagOfCells;
+    }
+
+    public List<Cell> getBagOfCellsOfZ(int z) {
+
+	List<Cell> bagOfCellsZ = new ArrayList<>();
+
+	for (int y = 0; y < grid[z].length; y++) {
+	    for (int x = 0; x < grid[z][y].length; x++) {
+		bagOfCellsZ.add(grid[z][y][x]);
+	    }
+	}
+	return bagOfCellsZ;
+    }
+
+    public Cell getCell(int z, int y, int x) {
+	return grid[z][y][x];
     }
 
     public int getSizeZ() {
@@ -60,10 +91,6 @@ public class Grid {
 
     public int getSizeX() {
 	return grid[0] != null && grid[0][0] != null ? grid[0][0].length : 0;
-    }
-
-    public Cell[][][] getGrid() {
-	return grid;
     }
 
 }

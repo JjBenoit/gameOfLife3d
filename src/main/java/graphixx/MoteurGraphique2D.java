@@ -10,7 +10,7 @@ public class MoteurGraphique2D {
 
     private List<GraphicalRender> renders;
 
-    protected int waitInMS = 20;
+    protected int waitInMS = 10;
 
     public MoteurGraphique2D() {
 	renders = new ArrayList<>();

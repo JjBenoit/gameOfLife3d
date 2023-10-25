@@ -12,11 +12,11 @@
 
   <Loggers>
 
-    <Logger name="game.GameOflife" level="INFO" />
+    <Logger name="game.GameOflife" level="DEBUG" />
     <Logger name="printGrid" level="INFO" />
-    <Logger name="graphixx.GridFramePaint" level="INFO" />
-    <Logger name="game.rules.StandardRulesEvolutionCell" level="INFO" />
-    <Logger name="game.object.Cell" level="INFO" />
+    <Logger name="graphixx.GridFramePaint" level="DEBUG" />
+    <Logger name="game.rules.StandardRulesEvolutionCell" level="DEBUG" />
+    <Logger name="game.object.Cell" level="DEBUG" />
     <Logger name="util.GridUtil" level="INFO" />
     <Logger name="game.visitor.AbstractVisitThreeDimensionalArray" level="INFO" />
     
@@ -24,7 +24,7 @@
     
     
 
-    <Root level="INFO">
+    <Root level="DEBUG">
       <AppenderRef ref="console" />
     </Root>
 
