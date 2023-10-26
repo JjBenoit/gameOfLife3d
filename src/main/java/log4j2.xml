@@ -19,14 +19,14 @@
     <Logger name="game.object.Cell" level="INFO" />
     <Logger name="util.GridUtil" level="INFO" />
     <Logger name="game.visitor.AbstractVisitThreeDimensionalArray" level="INFO" />
-    <Logger name="graphixx.PanelCells" level="INFO" />
+    <Logger name="graphixx.PanelCells" level="DEBUG" />
     <Logger name="graphixx.PanelInfos" level="INFO" />
     
     
     
     
 
-    <Root level="INFO">
+    <Root level="DEBUG">
       <AppenderRef ref="console" />
     </Root>
 

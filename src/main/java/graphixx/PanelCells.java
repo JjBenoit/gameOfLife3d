@@ -48,7 +48,7 @@ public class PanelCells extends Canvas implements GraphicalRender
 
     }
 
-    public void activeDBuffering()
+    private void activeDBuffering()
     {
         // 2 buffers dans la VRAM donc c'est du double-buffering
         createBufferStrategy(2);
@@ -99,7 +99,7 @@ public class PanelCells extends Canvas implements GraphicalRender
             strategy.show();
 
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Grid affichée en : " + (System.currentTimeMillis() - time) + " ms");
+                LOGGER.debug("Grid (calcul next turn et affichage ) en : " + (System.currentTimeMillis() - time) + " ms");
         }
 
     }

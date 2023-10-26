@@ -1,42 +1,54 @@
 package game.object;
 
-import java.util.Arrays;
 import java.util.List;
 
-public class CellState {
+public class CellState
+{
 
     private int state;
+
     private int contextSum;
-    private int[] contextDetails = new int[8];
 
-    public CellState(int initialState) {
-	this.state = initialState;
+    public CellState(int initialState)
+    {
+        this.state = initialState;
     }
 
-    public void computeContext(List<Cell> connectedCells) {
-
-	for (int i = 0; i < connectedCells.size(); i++) {
-	    contextSum += connectedCells.get(i).getState();
-	    contextDetails[i] = connectedCells.get(i).getState();
-	}
+    public CellState(CellState cell)
+    {
+        this.state = cell.state;
+        this.contextSum = cell.contextSum;
     }
 
-    public Integer getState() {
-	return state;
+    public void computeContext(List<Cell> connectedCells)
+    {
+        contextSum = connectedCells.stream().map(x -> x.getState()).reduce(0, Integer::sum);
     }
 
-    public void setState(Integer state) {
-	this.state = state;
+    public void updateContext(int delta)
+    {
+        contextSum += delta;
     }
 
-    public Integer getContext() {
-	return contextSum;
+    public Integer getState()
+    {
+        return state;
+    }
+
+    public void setState(Integer state)
+    {
+        this.state = state;
+    }
+
+    public Integer getContext()
+    {
+        return contextSum;
     }
 
     @Override
-    public String toString() {
-	return "CellState [state=" + state + ", contextSum=" + contextSum + ", contextDetails="
-		+ Arrays.toString(contextDetails) + "]";
+    public String toString()
+    {
+        return "CellState [state=" + state + ", contextSum=" + contextSum;
     }
 
 }
