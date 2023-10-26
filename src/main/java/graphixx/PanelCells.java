@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +15,8 @@ import game.GameOflife;
 import game.StateLife;
 import game.object.Cell;
 
-public class PanelCells extends Canvas implements GraphicalRender {
+public class PanelCells extends Canvas implements GraphicalRender
+{
 
     private GameInfos gameInfos;
 
@@ -30,85 +32,101 @@ public class PanelCells extends Canvas implements GraphicalRender {
 
     private List<Cell> listCellsofZ;
 
-    private ForkJoinPool executor;
-
     private static final Logger LOGGER = LogManager.getLogger(PanelCells.class);
 
-    public PanelCells(GameInfos gameInfos, GameOflife jeuVie) {
-	this.gameInfos = gameInfos;
-	this.jeuVie = jeuVie;
+    public PanelCells(GameInfos gameInfos, GameOflife jeuVie)
+    {
+        this.gameInfos = gameInfos;
+        this.jeuVie = jeuVie;
 
-	setSize(gameInfos.getGrid().getSizeX() * gameInfos.getDimCellule().width,
-		gameInfos.getGrid().getSizeY() * gameInfos.getDimCellule().height);
+        setSize(gameInfos.getGrid().getSizeX() * gameInfos.getDimCellule().width,
+            gameInfos.getGrid().getSizeY() * gameInfos.getDimCellule().height);
 
-	addMouseListener(new MouseListenerGrid(gameInfos));
-	// inhibe la méthode courante d'affichage du composant
-	setIgnoreRepaint(true);
-	executor = new ForkJoinPool(2);
+        addMouseListener(new MouseListenerGrid(gameInfos));
+        // inhibe la méthode courante d'affichage du composant
+        setIgnoreRepaint(true);
 
     }
 
-    public void activeDBuffering() {
-
-	// 2 buffers dans la VRAM donc c'est du double-buffering
-	createBufferStrategy(2);
-	strategy = getBufferStrategy();
+    public void activeDBuffering()
+    {
+        // 2 buffers dans la VRAM donc c'est du double-buffering
+        createBufferStrategy(2);
+        strategy = getBufferStrategy();
     }
 
     @Override
-    public void render() {
+    public void render()
+    {
 
-	if (strategy == null)
-	    activeDBuffering();
+        if (strategy == null)
+            activeDBuffering();
 
-	buffer = strategy.getDrawGraphics();
+        if (!gameInfos.isPaused() && isDisplayable())
+        {
+            buffer = strategy.getDrawGraphics();
 
-	if (!gameInfos.isPaused() && isDisplayable()) {
+            if (listCellsofZ == null || selectedZ != gameInfos.getSelectedZ())
+            {
+                listCellsofZ = gameInfos.getGrid().getBagOfCellsOfZ(selectedZ);
+                selectedZ = gameInfos.getSelectedZ();
+            }
 
-	    if (listCellsofZ == null || selectedZ != gameInfos.getSelectedZ()) {
-		listCellsofZ = gameInfos.getGrid().getBagOfCellsOfZ(selectedZ);
-		selectedZ = gameInfos.getSelectedZ();
-	    }
+            long time = System.currentTimeMillis();
 
-	    long time = System.currentTimeMillis();
+            // Graphics is not thread safe can't be MultiThreaded, so creation of one single thread
+            ForkJoinTask task = ForkJoinPool.commonPool().submit(() -> listCellsofZ.stream().forEach((cell) -> update(cell)));
 
-	    // BufferedImage img = new BufferedImage(selectedZ, selectedZ,
-	    // BufferedImage.TYPE_INT_RGB);
-	    // Pour multiThread : executor.submit(() ->
-	    // listCellsofZ.parallstream().forEach((cell) -> update(cell))).join(); mais le
-	    // muti thread pose probleme grphic est il tread safe ?
+            // this call a method threaded + join
+            jeuVie.playOneTurn();
 
-	    executor.submit(() -> listCellsofZ.stream().forEach((cell) -> update(cell))).join();
+            // we wait until render is finished
+            while (!task.isDone())
+            {
+                try
+                {
+                    Thread.sleep(10);
+                }
+                catch (InterruptedException e)
+                {
+                }
 
-	    jeuVie.playOneTurn();
+            }
+            // we swap buffer when the turn is played and the render is finished
+            jeuVie.flipCurrentActiveStateBufferIndex();
 
-	    buffer.dispose();
-	    strategy.show();
+            buffer.dispose();
+            strategy.show();
 
-	    if (LOGGER.isDebugEnabled())
-		LOGGER.debug("Grid affichée en : " + (System.currentTimeMillis() - time) + " ms");
-	}
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("Grid affichée en : " + (System.currentTimeMillis() - time) + " ms");
+        }
 
     }
 
-    private void update(Cell cell) {
+    private void update(Cell cell)
+    {
 
-	// on ne dessine pas ce qui ne se voit pas
-	if (!(cell.getPositionInGrid().x * gameInfos.getDimCellule().width > getWidth())
-		&& !(cell.getPositionInGrid().y * gameInfos.getDimCellule().height > getHeight())) {
+        // on ne dessine pas ce qui ne se voit pas
+        if (!(cell.getPositionInGrid().x * gameInfos.getDimCellule().width > getWidth())
+            && !(cell.getPositionInGrid().y * gameInfos.getDimCellule().height > getHeight()))
+        {
 
-	    if (cell.getState() == StateLife.DEATH_VALUE) {
-		buffer.setColor(Color.BLACK);
-		buffer.fillRect(cell.getPositionInGrid().x * gameInfos.getDimCellule().width,
-			cell.getPositionInGrid().y * gameInfos.getDimCellule().height, gameInfos.getDimCellule().width,
-			gameInfos.getDimCellule().height);
-	    } else {
-		buffer.setColor(Color.WHITE);
-		buffer.fillRect(cell.getPositionInGrid().x * gameInfos.getDimCellule().width,
-			cell.getPositionInGrid().y * gameInfos.getDimCellule().height, gameInfos.getDimCellule().width,
-			gameInfos.getDimCellule().height);
-	    }
-	}
+            if (cell.getState() == StateLife.DEATH_VALUE)
+            {
+                buffer.setColor(Color.BLACK);
+                buffer.fillRect(cell.getPositionInGrid().x * gameInfos.getDimCellule().width,
+                    cell.getPositionInGrid().y * gameInfos.getDimCellule().height, gameInfos.getDimCellule().width,
+                    gameInfos.getDimCellule().height);
+            }
+            else
+            {
+                buffer.setColor(Color.WHITE);
+                buffer.fillRect(cell.getPositionInGrid().x * gameInfos.getDimCellule().width,
+                    cell.getPositionInGrid().y * gameInfos.getDimCellule().height, gameInfos.getDimCellule().width,
+                    gameInfos.getDimCellule().height);
+            }
+        }
 
     }
 }
