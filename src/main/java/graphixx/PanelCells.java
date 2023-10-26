@@ -53,13 +53,8 @@ public class PanelCells extends Canvas implements GraphicalRender {
 
 	    for (int y = 0; y < gameInfos.getGrid().getGrid()[gameInfos.getSelectedZ()].length; y++) {
 
-		try {
-		    Thread.ofVirtual().start(new RunnableUpGraphixGrid(buffer, gameInfos.getGrid(),
-			    gameInfos.getSelectedZ(), y, gameInfos.getDimCellule(), this)).join();
-		} catch (InterruptedException e) {
-		    // TODO Auto-generated catch block
-		    e.printStackTrace();
-		}
+		Thread.ofVirtual().start(new RunnableUpGraphixGrid(buffer, gameInfos.getGrid(),
+			gameInfos.getSelectedZ(), y, gameInfos.getDimCellule(), this));
 
 	    }
 
@@ -71,34 +66,49 @@ public class PanelCells extends Canvas implements GraphicalRender {
 	}
 
     }
+}
 
-    record RunnableUpGraphixGrid(Graphics g, Grid grid, int selectedZ, int y, Dimension dimCellule, Canvas panelCells)
-	    implements Runnable {
+class RunnableUpGraphixGrid implements Runnable {
 
-	@Override
-	public void run() {
+    Graphics g;
+    Grid grid;
+    int selectedZ;
+    int y;
+    Dimension dimCellule;
+    Canvas panelCells;
 
-	    for (int x = 0; x < grid.getGrid()[selectedZ][y].length; x++) {
+    public RunnableUpGraphixGrid(Graphics g, Grid grid, int selectedZ, int y, Dimension dimCellule, Canvas panelCells) {
+	this.g = g;
+	this.grid = grid;
+	this.selectedZ = selectedZ;
+	this.y = y;
+	this.dimCellule = dimCellule;
+	this.panelCells = panelCells;
+    }
 
-		// on ne dessine pas ce qui ne se voit pas
-		if (x * dimCellule.width > panelCells.getWidth())
-		    break;
+    @Override
+    public void run() {
 
-		// on ne dessine pas ce qui ne se voit pas
-		if (y * dimCellule.height > panelCells.getHeight())
-		    break;
+	for (int x = 0; x < grid.getGrid()[selectedZ][y].length; x++) {
 
-		if (grid.getGrid()[selectedZ][y][x].getState() == StateLife.DEATH_VALUE) {
-		    g.setColor(Color.BLACK);
-		    g.fillRect(x * dimCellule.width, y * dimCellule.height, dimCellule.width, dimCellule.height);
-		} else {
-		    g.setColor(Color.WHITE);
-		    g.fillRect(x * dimCellule.width, y * dimCellule.height, dimCellule.width, dimCellule.height);
-		}
+	    // on ne dessine pas ce qui ne se voit pas
+	    if (x * dimCellule.width > panelCells.getWidth())
+		break;
 
+	    // on ne dessine pas ce qui ne se voit pas
+	    if (y * dimCellule.height > panelCells.getHeight())
+		break;
+
+	    if (grid.getGrid()[selectedZ][y][x].getState() == StateLife.DEATH_VALUE) {
+		g.setColor(Color.BLACK);
+		g.fillRect(x * dimCellule.width, y * dimCellule.height, dimCellule.width, dimCellule.height);
+	    } else {
+		g.setColor(Color.WHITE);
+		g.fillRect(x * dimCellule.width, y * dimCellule.height, dimCellule.width, dimCellule.height);
 	    }
 
 	}
 
     }
+
 }
