@@ -1,6 +1,7 @@
 package graphixx;
 
 import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -8,6 +9,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -25,7 +27,7 @@ public class GridFramePaint extends MoteurGraphique2D
 
     private GameOflife jeu;
 
-    private JPanel panelCells = new JPanel();
+    private Canvas panelCells = new Canvas();
 
     private JPanel panelInfos = new JPanel();
 
@@ -44,7 +46,9 @@ public class GridFramePaint extends MoteurGraphique2D
     // quelle profondeur afficher ?
     private int selectedZ = 0;
 
-    protected boolean paused = true;
+    private BufferStrategy strategyPanelCell;
+
+    protected boolean paused = false;
 
     public GridFramePaint(GameOflife jeu)
     {
@@ -68,6 +72,11 @@ public class GridFramePaint extends MoteurGraphique2D
         dimCellule = new Dimension(5, 5);
         panelCells.setSize(bounds.width, (bounds.height - 100));
         panelCells.addMouseListener(new MouseListenerGrid(this));
+        panelCells.setIgnoreRepaint(true);
+
+        // 2 buffers dans la VRAM donc c'est du double-buffering
+        panelCells.createBufferStrategy(2);
+
     }
 
     private void addAndinitInfos()
@@ -84,11 +93,15 @@ public class GridFramePaint extends MoteurGraphique2D
         vitesse.setFont(new Font("Verdana", 1, 20));
         panelInfos.add(vitesse);
 
+        panelCells.createBufferStrategy(2);
+        // récupère les buffers graphiques dans la mémoire VRAM
+        strategyPanelCell = panelCells.getBufferStrategy();
     }
 
     private void upDatetGfxGrid()
     {
-        Graphics g = panelCells.getGraphics();
+
+        Graphics g = strategyPanelCell.getDrawGraphics();
 
         for (int y = 0; y < jeu.getGrid().getGrid()[selectedZ].length; y++)
         {
@@ -114,6 +127,9 @@ public class GridFramePaint extends MoteurGraphique2D
             if (y * dimCellule.height > panelCells.getHeight())
                 break;
         }
+
+        strategyPanelCell.show();
+        strategyPanelCell.dispose();
 
     }
 

@@ -16,8 +16,8 @@ public class RunGameRandomGrid
         Grid grid = null;
 
         // Taille de la grille
-        int sizeX = 100;
-        int sizeY = 100;
+        int sizeX = 1000;
+        int sizeY = 1000;
         int sizeZ = 1;
 
         GameOflife jeuVie = new GameOflife(sizeY, sizeX, sizeZ);

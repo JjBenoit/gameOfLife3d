@@ -41,7 +41,7 @@ public class GameOflife
         evolutionRule = new StandardRulesEvolutionCell();
 
         // customisable : la moteur d'enchainement des tours calculant l'état des celulles
-        turnExecutor = new MultiThreadTurnExecutor(50, evolutionRule);
+        turnExecutor = new MultiThreadTurnExecutor(10, evolutionRule);
 
         // customisable : la moteur de mise a jour du context ( environnment des cellule )
         gridContextUpdateExecutor = new MultiThreadGridContextUpdateExecutor(10, grid);

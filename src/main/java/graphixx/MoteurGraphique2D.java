@@ -35,17 +35,6 @@ public abstract class MoteurGraphique2D extends JFrame
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(tailleEcranX, tailleEcranY);
         setVisible(true);
-
-        // inhibe la méthode courante d'affichage du composant
-        setIgnoreRepaint(true);
-
-        // 2 buffers dans la VRAM donc c'est du double-buffering
-        createBufferStrategy(2);
-
-        // récupère les buffers graphiques dans la mémoire VRAM
-        strategy = getBufferStrategy();
-        buffer = strategy.getDrawGraphics();
-
     }
 
     public void go()
