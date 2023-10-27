@@ -12,7 +12,7 @@
 
   <Loggers>
 
-    <Logger name="game.GameOflife" level="DEBUG" />
+    <Logger name="game.GameOflife" level="INFO" />
     <Logger name="printGrid" level="INFO" />
     <Logger name="graphixx.GridFramePaint" level="INFO" />
     <Logger name="game.rules.StandardRulesEvolutionCell" level="INFO" />

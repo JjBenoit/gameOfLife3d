@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,8 +31,6 @@ public class PanelCells extends Canvas implements GraphicalRender {
 
     private List<Cell> listCellsofZ;
 
-    private ForkJoinPool executor;
-
     private static final Logger LOGGER = LogManager.getLogger(PanelCells.class);
 
     public PanelCells(GameInfos gameInfos, GameOflife jeuVie) {
@@ -44,12 +43,10 @@ public class PanelCells extends Canvas implements GraphicalRender {
 	addMouseListener(new MouseListenerGrid(gameInfos));
 	// inhibe la méthode courante d'affichage du composant
 	setIgnoreRepaint(true);
-	executor = new ForkJoinPool(2);
 
     }
 
-    public void activeDBuffering() {
-
+    private void activeDBuffering() {
 	// 2 buffers dans la VRAM donc c'est du double-buffering
 	createBufferStrategy(2);
 	strategy = getBufferStrategy();
@@ -61,9 +58,8 @@ public class PanelCells extends Canvas implements GraphicalRender {
 	if (strategy == null)
 	    activeDBuffering();
 
-	buffer = strategy.getDrawGraphics();
-
 	if (!gameInfos.isPaused() && isDisplayable()) {
+	    buffer = strategy.getDrawGraphics();
 
 	    if (listCellsofZ == null || selectedZ != gameInfos.getSelectedZ()) {
 		listCellsofZ = gameInfos.getGrid().getBagOfCellsOfZ(selectedZ);
@@ -72,21 +68,31 @@ public class PanelCells extends Canvas implements GraphicalRender {
 
 	    long time = System.currentTimeMillis();
 
-	    // BufferedImage img = new BufferedImage(selectedZ, selectedZ,
-	    // BufferedImage.TYPE_INT_RGB);
-	    // Pour multiThread : executor.submit(() ->
-	    // listCellsofZ.parallstream().forEach((cell) -> update(cell))).join(); mais le
-	    // muti thread pose probleme grphic est il tread safe ?
+	    // Graphics is not thread safe can't be MultiThreaded, so creation of one single
+	    // thread
+	    ForkJoinTask task = ForkJoinPool.commonPool()
+		    .submit(() -> listCellsofZ.stream().forEach((cell) -> update(cell)));
 
-	    executor.submit(() -> listCellsofZ.stream().forEach((cell) -> update(cell))).join();
-
+	    // this call a method threaded + join
 	    jeuVie.playOneTurn();
+
+	    // we wait until render is finished
+	    while (!task.isDone()) {
+		try {
+		    Thread.sleep(10);
+		} catch (InterruptedException e) {
+		}
+
+	    }
+	    // we swap buffer when the turn is played and the render is finished
+	    jeuVie.flipCurrentActiveStateBufferIndex();
 
 	    strategy.show();
 	    buffer.dispose();
 
 	    if (LOGGER.isDebugEnabled())
-		LOGGER.debug("Grid affichée en : " + (System.currentTimeMillis() - time) + " ms");
+		LOGGER.debug(
+			"Grid (calcul next turn et affichage ) en : " + (System.currentTimeMillis() - time) + " ms");
 	}
 
     }

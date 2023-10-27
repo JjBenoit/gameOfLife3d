@@ -11,7 +11,8 @@ import game.rules.StandardRulesEvolutionCell;
 import graphixx.GameInfos;
 import util.GridUtil;
 
-public class GameOflife {
+public class GameOflife
+{
 
     private GameInfos gameInfos;
 
@@ -23,51 +24,65 @@ public class GameOflife {
 
     private static final Logger LOGGER_PRINTGRID = LogManager.getLogger("printGrid");
 
-    public GameOflife(GameInfos gameInfos) {
+    public GameOflife(GameInfos gameInfos)
+    {
 
-	this.gameInfos = gameInfos;
-	// customisable : les regles d'evolution des cellules
-	evolutionRule = new StandardRulesEvolutionCell();
+        this.gameInfos = gameInfos;
+        // customisable : les regles d'evolution des cellules
+        evolutionRule = new StandardRulesEvolutionCell();
 
-	// customisable : la moteur d'enchainement des tours calculant l'état des
-	// celulles
-	turnExecutor = new MultiThreadTurnExecutor(10, evolutionRule);
+        // customisable : la moteur d'enchainement des tours calculant l'état des
+        // celulles
+        turnExecutor = new MultiThreadTurnExecutor(10, evolutionRule);
 
     }
 
-    public void play() {
-	while (true) {
-	    playOneTurn();
-	}
+    public void play()
+    {
+        while (true)
+        {
+            playOneTurn();
+            flipCurrentActiveStateBufferIndex();
+        }
     }
 
-    public void playNumberTurns(int nbTurn) {
-	int i = 0;
-	while (i < nbTurn) {
-	    playOneTurn();
-	    i++;
-	}
+    public void playNumberTurns(int nbTurn)
+    {
+        int i = 0;
+        while (i < nbTurn)
+        {
+            playOneTurn();
+            flipCurrentActiveStateBufferIndex();
+            i++;
+        }
     }
 
-    public void playOneTurn() {
+    public void playOneTurn()
+    {
 
-	if (LOGGER_PRINTGRID.isDebugEnabled()) {
-	    LOGGER_PRINTGRID
-		    .debug("Turn:" + gameInfos.getGameNbturn() + "\n" + GridUtil.printGrid(gameInfos.getGrid()));
-	}
+        if (LOGGER_PRINTGRID.isDebugEnabled())
+        {
+            LOGGER_PRINTGRID
+                .debug("Turn:" + gameInfos.getGameNbturn() + "\n" + GridUtil.printGrid(gameInfos.getGrid()));
+        }
 
-	long time = System.currentTimeMillis();
+        long time = System.currentTimeMillis();
 
-	turnExecutor.playOneTurn(gameInfos.getGrid());
+        turnExecutor.playOneTurn(gameInfos.getGrid());
 
-	// change de buffer pour le prochain tour
-	Cell.flipCurrentActiveStateBufferIndex();
+        if (LOGGER.isDebugEnabled())
+        {
+            LOGGER.debug("Grid traité en : " + (System.currentTimeMillis() - time) + " ms");
+        }
 
-	if (LOGGER.isDebugEnabled()) {
-	    LOGGER.debug("Grid traité en : " + (System.currentTimeMillis() - time) + " ms");
-	}
+        gameInfos.setGameNbturn(gameInfos.getGameNbturn() + 1);
 
-	gameInfos.setGameNbturn(gameInfos.getGameNbturn() + 1);
+    }
+
+    public void flipCurrentActiveStateBufferIndex()
+    {
+        // change de buffer pour le prochain tour
+        Cell.flipCurrentActiveStateBufferIndex();
 
     }
 

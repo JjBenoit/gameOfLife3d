@@ -8,20 +8,22 @@ import graphixx.GameInfos;
 import graphixx.GridFramePaint;
 import util.GridUtil;
 
-public class RunGameRandomGrid {
+public class RunGameRandomGrid
+{
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
 
-	GameInfos gameInfos = new GameInfos();
+        GameInfos gameInfos = new GameInfos();
 
-	gameInfos.setGrid(new Grid(1, 100, 100, StateLife.DEATH_VALUE, new VisitThreeDimensionalArrayCellTor()));
+        gameInfos.setGrid(new Grid(1, 500, 500, StateLife.DEATH_VALUE, new VisitThreeDimensionalArrayCellTor()));
 
-	// option pré remplir la gille avec des cellules mortes random
-	GridUtil.addRandomDeathCell((int) ((gameInfos.getGrid().getSizeY() * gameInfos.getGrid().getSizeX()) * 0.5),
-		StateLife.LIFE_VALUE, gameInfos.getGrid());
+        // option pré remplir la gille avec des cellules mortes random
+        GridUtil.addRandomDeathCell((int) ((gameInfos.getGrid().getSizeY() * gameInfos.getGrid().getSizeX()) * 0.5),
+            StateLife.LIFE_VALUE, gameInfos.getGrid());
 
-	GridFramePaint frame = new GridFramePaint(gameInfos, new GameOflife(gameInfos));
-	frame.startRender();
+        GridFramePaint frame = new GridFramePaint(gameInfos, new GameOflife(gameInfos));
+        frame.startRender();
 
     }
 
