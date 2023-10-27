@@ -1,4 +1,4 @@
-package graphixx;
+package graphixx.panel;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -10,6 +10,9 @@ import javax.swing.border.LineBorder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import dto.GameInfos;
+import graphixx.engine.GraphicalRender;
 
 public class PanelInfos extends JPanel implements GraphicalRender {
 

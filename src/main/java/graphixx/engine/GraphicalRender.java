@@ -1,4 +1,4 @@
-package graphixx;
+package graphixx.engine;
 
 public interface GraphicalRender {
 

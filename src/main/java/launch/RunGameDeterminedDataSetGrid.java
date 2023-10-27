@@ -2,10 +2,10 @@ package launch;
 
 import java.io.File;
 
+import dto.GameInfos;
 import game.GameOflife;
 import game.object.Grid;
-import graphixx.GameInfos;
-import graphixx.GridFramePaint;
+import graphixx.panel.GridFramePaint;
 import util.GridUtil;
 
 public class RunGameDeterminedDataSetGrid

@@ -1,10 +1,10 @@
 package launch;
 
+import dto.GameInfos;
 import game.GameOflife;
-import game.StateLife;
 import game.object.Grid;
+import game.object.StateLife;
 import game.visitor.VisitThreeDimensionalArrayCellTor;
-import graphixx.GameInfos;
 import util.GridUtil;
 
 public class RunGameRandomGridNoUX {

@@ -3,8 +3,8 @@ package game.rules;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import game.StateLife;
 import game.object.Cell;
+import game.object.StateLife;
 
 public class StandardRulesEvolutionCell implements EvolutionCellRule {
     private static final Logger LOGGER = LogManager.getLogger(StandardRulesEvolutionCell.class);

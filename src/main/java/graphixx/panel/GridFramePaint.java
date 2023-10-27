@@ -1,4 +1,4 @@
-package graphixx;
+package graphixx.panel;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -8,7 +8,10 @@ import javax.swing.JFrame;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import dto.GameInfos;
 import game.GameOflife;
+import graphixx.engine.MoteurGraphique2D;
+import graphixx.listener.KeyBordListener;
 
 public class GridFramePaint extends JFrame {
 

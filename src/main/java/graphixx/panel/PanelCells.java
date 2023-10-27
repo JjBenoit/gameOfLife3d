@@ -1,4 +1,4 @@
-package graphixx;
+package graphixx.panel;
 
 import java.awt.Canvas;
 import java.awt.Color;
@@ -11,9 +11,12 @@ import java.util.concurrent.ForkJoinTask;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import dto.GameInfos;
 import game.GameOflife;
-import game.StateLife;
 import game.object.Cell;
+import game.object.StateLife;
+import graphixx.engine.GraphicalRender;
+import graphixx.listener.MouseListenerGrid;
 
 public class PanelCells extends Canvas implements GraphicalRender {
 

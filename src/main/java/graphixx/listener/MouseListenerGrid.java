@@ -1,4 +1,4 @@
-package graphixx;
+package graphixx.listener;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -7,8 +7,9 @@ import java.awt.event.MouseListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import game.StateLife;
+import dto.GameInfos;
 import game.object.Cell;
+import game.object.StateLife;
 
 public class MouseListenerGrid implements MouseListener {
 

@@ -1,4 +1,4 @@
-package graphixx;
+package dto;
 
 import java.awt.Dimension;
 

@@ -1,4 +1,4 @@
-package graphixx;
+package graphixx.listener;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -11,6 +11,7 @@ import javax.xml.transform.TransformerException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import dto.GameInfos;
 import util.GridUtil;
 
 public class KeyBordListener extends KeyAdapter {

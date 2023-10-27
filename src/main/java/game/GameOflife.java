@@ -3,12 +3,12 @@ package game;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import dto.GameInfos;
 import game.executor.turn.MultiThreadTurnExecutor;
 import game.executor.turn.TurnExecutor;
 import game.object.Cell;
 import game.rules.EvolutionCellRule;
 import game.rules.StandardRulesEvolutionCell;
-import graphixx.GameInfos;
 import util.GridUtil;
 
 public class GameOflife
