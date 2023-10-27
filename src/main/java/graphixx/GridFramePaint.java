@@ -117,7 +117,7 @@ public class GridFramePaint extends MoteurGraphique2D {
 	}
 
 	strategyPanelCell.show();
-	// strategyPanelCell.dispose();
+	g.dispose();
 
     }
 
