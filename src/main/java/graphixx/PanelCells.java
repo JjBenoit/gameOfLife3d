@@ -15,8 +15,7 @@ import game.GameOflife;
 import game.StateLife;
 import game.object.Cell;
 
-public class PanelCells extends Canvas implements GraphicalRender
-{
+public class PanelCells extends Canvas implements GraphicalRender {
 
     private GameInfos gameInfos;
 
@@ -34,99 +33,88 @@ public class PanelCells extends Canvas implements GraphicalRender
 
     private static final Logger LOGGER = LogManager.getLogger(PanelCells.class);
 
-    public PanelCells(GameInfos gameInfos, GameOflife jeuVie)
-    {
-        this.gameInfos = gameInfos;
-        this.jeuVie = jeuVie;
+    public PanelCells(GameInfos gameInfos, GameOflife jeuVie) {
+	this.gameInfos = gameInfos;
+	this.jeuVie = jeuVie;
 
-        setSize(gameInfos.getGrid().getSizeX() * gameInfos.getDimCellule().width,
-            gameInfos.getGrid().getSizeY() * gameInfos.getDimCellule().height);
+	setSize(gameInfos.getGrid().getSizeX() * gameInfos.getDimCellule().width,
+		gameInfos.getGrid().getSizeY() * gameInfos.getDimCellule().height);
 
-        addMouseListener(new MouseListenerGrid(gameInfos));
-        // inhibe la méthode courante d'affichage du composant
-        setIgnoreRepaint(true);
+	addMouseListener(new MouseListenerGrid(gameInfos));
+	// inhibe la méthode courante d'affichage du composant
+	setIgnoreRepaint(true);
 
     }
 
-    private void activeDBuffering()
-    {
-        // 2 buffers dans la VRAM donc c'est du double-buffering
-        createBufferStrategy(2);
-        strategy = getBufferStrategy();
+    private void activeDBuffering() {
+	// 2 buffers dans la VRAM donc c'est du double-buffering
+	createBufferStrategy(2);
+	strategy = getBufferStrategy();
     }
 
     @Override
-    public void render()
-    {
+    public void render() {
 
-        if (strategy == null)
-            activeDBuffering();
+	if (strategy == null)
+	    activeDBuffering();
 
-        if (!gameInfos.isPaused() && isDisplayable())
-        {
-            buffer = strategy.getDrawGraphics();
+	if (!gameInfos.isPaused() && isDisplayable()) {
+	    buffer = strategy.getDrawGraphics();
 
-            if (listCellsofZ == null || selectedZ != gameInfos.getSelectedZ())
-            {
-                listCellsofZ = gameInfos.getGrid().getBagOfCellsOfZ(selectedZ);
-                selectedZ = gameInfos.getSelectedZ();
-            }
+	    if (listCellsofZ == null || selectedZ != gameInfos.getSelectedZ()) {
+		listCellsofZ = gameInfos.getGrid().getBagOfCellsOfZ(selectedZ);
+		selectedZ = gameInfos.getSelectedZ();
+	    }
 
-            long time = System.currentTimeMillis();
+	    long time = System.currentTimeMillis();
 
-            // Graphics is not thread safe can't be MultiThreaded, so creation of one single thread
-            ForkJoinTask task = ForkJoinPool.commonPool().submit(() -> listCellsofZ.stream().forEach((cell) -> update(cell)));
+	    // Graphics is not thread safe can't be MultiThreaded, so creation of one single
+	    // thread
+	    ForkJoinTask task = ForkJoinPool.commonPool()
+		    .submit(() -> listCellsofZ.stream().forEach((cell) -> update(cell)));
 
-            // this call a method threaded + join
-            jeuVie.playOneTurn();
+	    // this call a method threaded + join
+	    jeuVie.playOneTurn();
 
-            // we wait until render is finished
-            while (!task.isDone())
-            {
-                try
-                {
-                    Thread.sleep(10);
-                }
-                catch (InterruptedException e)
-                {
-                }
+	    // we wait until render is finished
+	    while (!task.isDone()) {
+		try {
+		    Thread.sleep(10);
+		} catch (InterruptedException e) {
+		}
 
-            }
-            // we swap buffer when the turn is played and the render is finished
-            jeuVie.flipCurrentActiveStateBufferIndex();
+	    }
+	    // we swap buffer when the turn is played and the render is finished
+	    jeuVie.flipCurrentActiveStateBufferIndex();
 
-            buffer.dispose();
-            strategy.show();
+	    strategy.show();
+	    buffer.dispose();
 
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Grid (calcul next turn et affichage ) en : " + (System.currentTimeMillis() - time) + " ms");
-        }
+	    if (LOGGER.isDebugEnabled())
+		LOGGER.debug(
+			"Grid (calcul next turn et affichage ) en : " + (System.currentTimeMillis() - time) + " ms");
+	}
 
     }
 
-    private void update(Cell cell)
-    {
+    private void update(Cell cell) {
 
-        // on ne dessine pas ce qui ne se voit pas
-        if (!(cell.getPositionInGrid().x * gameInfos.getDimCellule().width > getWidth())
-            && !(cell.getPositionInGrid().y * gameInfos.getDimCellule().height > getHeight()))
-        {
+	// on ne dessine pas ce qui ne se voit pas
+	if (!(cell.getPositionInGrid().x * gameInfos.getDimCellule().width > getWidth())
+		&& !(cell.getPositionInGrid().y * gameInfos.getDimCellule().height > getHeight())) {
 
-            if (cell.getState() == StateLife.DEATH_VALUE)
-            {
-                buffer.setColor(Color.BLACK);
-                buffer.fillRect(cell.getPositionInGrid().x * gameInfos.getDimCellule().width,
-                    cell.getPositionInGrid().y * gameInfos.getDimCellule().height, gameInfos.getDimCellule().width,
-                    gameInfos.getDimCellule().height);
-            }
-            else
-            {
-                buffer.setColor(Color.WHITE);
-                buffer.fillRect(cell.getPositionInGrid().x * gameInfos.getDimCellule().width,
-                    cell.getPositionInGrid().y * gameInfos.getDimCellule().height, gameInfos.getDimCellule().width,
-                    gameInfos.getDimCellule().height);
-            }
-        }
+	    if (cell.getState() == StateLife.DEATH_VALUE) {
+		buffer.setColor(Color.BLACK);
+		buffer.fillRect(cell.getPositionInGrid().x * gameInfos.getDimCellule().width,
+			cell.getPositionInGrid().y * gameInfos.getDimCellule().height, gameInfos.getDimCellule().width,
+			gameInfos.getDimCellule().height);
+	    } else {
+		buffer.setColor(Color.WHITE);
+		buffer.fillRect(cell.getPositionInGrid().x * gameInfos.getDimCellule().width,
+			cell.getPositionInGrid().y * gameInfos.getDimCellule().height, gameInfos.getDimCellule().width,
+			gameInfos.getDimCellule().height);
+	    }
+	}
 
     }
 }
