@@ -82,8 +82,8 @@ public class PanelCells extends Canvas implements GraphicalRender {
 
 	    jeuVie.playOneTurn();
 
-	    buffer.dispose();
 	    strategy.show();
+	    buffer.dispose();
 
 	    if (LOGGER.isDebugEnabled())
 		LOGGER.debug("Grid affichée en : " + (System.currentTimeMillis() - time) + " ms");
