@@ -22,8 +22,7 @@ import org.apache.logging.log4j.Logger;
 import game.GameOflife;
 import game.StateLife;
 
-public class GridFramePaint extends MoteurGraphique2D
-{
+public class GridFramePaint extends MoteurGraphique2D {
 
     private GameOflife jeu;
 
@@ -50,140 +49,121 @@ public class GridFramePaint extends MoteurGraphique2D
 
     protected boolean paused = false;
 
-    public GridFramePaint(GameOflife jeu)
-    {
-        this.jeu = jeu;
-        bounds = ((Graphics2D) getGraphics()).getDeviceConfiguration().getBounds();
+    public GridFramePaint(GameOflife jeu) {
+	this.jeu = jeu;
+	bounds = ((Graphics2D) getGraphics()).getDeviceConfiguration().getBounds();
 
-        addKeyListener(new KeyBordListener(this, jeu));
-        add(panelCells, BorderLayout.CENTER);
-        addAndinitInfos();
-        initPanelCells();
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	addKeyListener(new KeyBordListener(this, jeu));
+	add(panelCells, BorderLayout.CENTER);
+	addAndinitInfos();
+	initPanelCells();
+	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        setSize(bounds.width, bounds.height);
+	setSize(bounds.width, bounds.height);
 
-        setVisible(true);
-
-    }
-
-    private void initPanelCells()
-    {
-        dimCellule = new Dimension(5, 5);
-        panelCells.setSize(bounds.width, (bounds.height - 100));
-        panelCells.addMouseListener(new MouseListenerGrid(this));
-        panelCells.setIgnoreRepaint(true);
-
-        // 2 buffers dans la VRAM donc c'est du double-buffering
-        panelCells.createBufferStrategy(2);
+	setVisible(true);
 
     }
 
-    private void addAndinitInfos()
-    {
-        add(panelInfos, BorderLayout.SOUTH);
-        panelInfos.setBorder(new LineBorder(Color.BLACK));
-        panelInfos.setLayout(new FlowLayout(FlowLayout.LEFT));
+    private void initPanelCells() {
+	dimCellule = new Dimension(5, 5);
+	panelCells.setSize(bounds.width, (bounds.height - 100));
+	panelCells.addMouseListener(new MouseListenerGrid(this));
+	panelCells.setIgnoreRepaint(true);
 
-        nbTurn = new JLabel();
-        nbTurn.setFont(new Font("Verdana", 1, 20));
-        panelInfos.add(nbTurn);
-
-        vitesse = new JLabel();
-        vitesse.setFont(new Font("Verdana", 1, 20));
-        panelInfos.add(vitesse);
-
-        panelCells.createBufferStrategy(2);
-        // récupère les buffers graphiques dans la mémoire VRAM
-        strategyPanelCell = panelCells.getBufferStrategy();
-    }
-
-    private void upDatetGfxGrid()
-    {
-
-        Graphics g = strategyPanelCell.getDrawGraphics();
-
-        for (int y = 0; y < jeu.getGrid().getGrid()[selectedZ].length; y++)
-        {
-            for (int x = 0; x < jeu.getGrid().getGrid()[selectedZ][y].length; x++)
-            {
-
-                if (jeu.getGrid().getGrid()[selectedZ][y][x].getState() == StateLife.DEATH_VALUE)
-                {
-                    g.setColor(Color.BLACK);
-                    g.fillRect(x * dimCellule.width, y * dimCellule.height, dimCellule.width, dimCellule.height);
-                }
-                else
-                {
-                    g.setColor(Color.WHITE);
-                    g.fillRect(x * dimCellule.width, y * dimCellule.height, dimCellule.width, dimCellule.height);
-                }
-                // on ne dessine pas ce qui ne se voit pas
-                if (x * dimCellule.width > panelCells.getWidth())
-                    break;
-
-            }
-            // on ne dessine pas ce qui ne se voit pas
-            if (y * dimCellule.height > panelCells.getHeight())
-                break;
-        }
-
-        strategyPanelCell.show();
-        strategyPanelCell.dispose();
+	panelCells.createBufferStrategy(2);
+	// récupère les buffers graphiques dans la mémoire VRAM
+	strategyPanelCell = panelCells.getBufferStrategy();
 
     }
 
-    private void upDateInfo()
-    {
-        nbTurn.setText("Nb turn :" + jeu.getTurn() + "." + " Z :" + selectedZ);
-        vitesse.setText("Refresh :" + waitInMS + " ms" + (paused ? " Game in pause--> Press 'space bar' to resume" : ""));
+    private void addAndinitInfos() {
+	add(panelInfos, BorderLayout.SOUTH);
+	panelInfos.setBorder(new LineBorder(Color.BLACK));
+	panelInfos.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+	nbTurn = new JLabel();
+	nbTurn.setFont(new Font("Verdana", 1, 20));
+	panelInfos.add(nbTurn);
+
+	vitesse = new JLabel();
+	vitesse.setFont(new Font("Verdana", 1, 20));
+	panelInfos.add(vitesse);
+
+    }
+
+    private void upDatetGfxGrid() {
+
+	Graphics g = strategyPanelCell.getDrawGraphics();
+
+	for (int y = 0; y < jeu.getGrid().getGrid()[selectedZ].length; y++) {
+	    for (int x = 0; x < jeu.getGrid().getGrid()[selectedZ][y].length; x++) {
+
+		if (jeu.getGrid().getGrid()[selectedZ][y][x].getState() == StateLife.DEATH_VALUE) {
+		    g.setColor(Color.BLACK);
+		    g.fillRect(x * dimCellule.width, y * dimCellule.height, dimCellule.width, dimCellule.height);
+		} else {
+		    g.setColor(Color.WHITE);
+		    g.fillRect(x * dimCellule.width, y * dimCellule.height, dimCellule.width, dimCellule.height);
+		}
+		// on ne dessine pas ce qui ne se voit pas
+		if (x * dimCellule.width > panelCells.getWidth())
+		    break;
+
+	    }
+	    // on ne dessine pas ce qui ne se voit pas
+	    if (y * dimCellule.height > panelCells.getHeight())
+		break;
+	}
+
+	strategyPanelCell.show();
+	// strategyPanelCell.dispose();
+
+    }
+
+    private void upDateInfo() {
+	nbTurn.setText("Nb turn :" + jeu.getTurn() + "." + " Z :" + selectedZ);
+	vitesse.setText(
+		"Refresh :" + waitInMS + " ms" + (paused ? " Game in pause--> Press 'space bar' to resume" : ""));
     }
 
     @Override
-    protected void graphicalRender()
-    {
-        if (!isPaused() && isDisplayable())
-        {
-            jeu.playOneTurn();
-        }
+    protected void graphicalRender() {
+	if (!isPaused() && isDisplayable()) {
+	    jeu.playOneTurn();
+	}
 
-        long time = System.currentTimeMillis();
-        upDatetGfxGrid();
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Grid affichée en : " + (System.currentTimeMillis() - time) + " ms");
+	long time = System.currentTimeMillis();
+	upDatetGfxGrid();
+	if (LOGGER.isDebugEnabled())
+	    LOGGER.debug("Grid affichée en : " + (System.currentTimeMillis() - time) + " ms");
 
-        upDateInfo();
+	upDateInfo();
 
     }
 
-    public boolean isPaused()
-    {
-        return paused;
+    public boolean isPaused() {
+	return paused;
     }
 
-    public GameOflife getJeu()
-    {
-        return jeu;
+    public GameOflife getJeu() {
+	return jeu;
     }
 
-    public int getSelectedZ()
-    {
-        return selectedZ;
+    public int getSelectedZ() {
+	return selectedZ;
     }
 
-    public void setSelectedZ(int selectedZ)
-    {
-        this.selectedZ = selectedZ;
+    public void setSelectedZ(int selectedZ) {
+	this.selectedZ = selectedZ;
     }
 
-    public Dimension getDimCellule()
-    {
-        return dimCellule;
+    public Dimension getDimCellule() {
+	return dimCellule;
     }
 
-    public void setDimCellule(Dimension dimCellule)
-    {
-        this.dimCellule = dimCellule;
+    public void setDimCellule(Dimension dimCellule) {
+	this.dimCellule = dimCellule;
     }
 
 }
