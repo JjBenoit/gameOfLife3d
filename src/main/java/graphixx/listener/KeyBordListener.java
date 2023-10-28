@@ -3,16 +3,11 @@ package graphixx.listener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.IOException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import dto.GameInfos;
-import util.GridUtil;
 
 public class KeyBordListener extends KeyAdapter {
     private GameInfos gameInfos;
@@ -61,12 +56,12 @@ public class KeyBordListener extends KeyAdapter {
 	else if (key == KeyEvent.VK_S) {
 
 	    File f = new File("saves");
-	    try {
-		GridUtil.saveGrid(f, gameInfos.getGrid(), gameInfos.getGameNbturn());
-		LOGGER.info("Grid state saved under : " + f.getCanonicalFile());
-	    } catch (ParserConfigurationException | TransformerException | IOException e1) {
-		LOGGER.error("Error while saving grid state", e1);
-	    }
+//	    try {
+//		GridUtil.saveGrid(f, gameInfos.getGrid(), gameInfos.getGameNbturn());
+//		LOGGER.info("Grid state saved under : " + f.getCanonicalFile());
+//	    } catch (ParserConfigurationException | TransformerException | IOException e1) {
+//		LOGGER.error("Error while saving grid state", e1);
+//	    }
 
 	}
 
