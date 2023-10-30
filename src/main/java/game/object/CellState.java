@@ -18,7 +18,8 @@ public class CellState {
     }
 
     public void computeContext(List<Cell> connectedCells) {
-	contextSum = connectedCells.parallelStream().map(x -> x.getState()).reduce(0, Integer::sum);
+	// using parallelStream here, reduce perf
+	contextSum = connectedCells.stream().map(x -> x.getState()).reduce(0, Integer::sum);
     }
 
     public void updateContext(int delta) {
